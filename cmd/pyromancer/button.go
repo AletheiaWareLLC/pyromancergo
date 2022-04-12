@@ -2,6 +2,9 @@ package main
 
 import (
 	"fyne.io/fyne/v2"
+	"fyne.io/fyne/v2/canvas"
+	"fyne.io/fyne/v2/container"
+	"fyne.io/fyne/v2/theme"
 	"fyne.io/fyne/v2/widget"
 )
 
@@ -24,11 +27,18 @@ func NewButton(name string, onTapped func()) fyne.CanvasObject {
 
 func (b *Button) CreateRenderer() fyne.WidgetRenderer {
 	b.ExtendBaseWidget(b)
-	r := &buttonRenderer{
-		b: b,
-		label: widget.NewLabelWithStyle("", fyne.TextAlignCenter, fyne.TextStyle{
+	t := &canvas.Text{
+		Alignment: fyne.TextAlignCenter,
+		Color:     theme.TextColor(),
+		TextSize:  theme.TextSize(),
+		TextStyle: fyne.TextStyle{
 			Monospace: true,
-		}),
+		},
+	}
+	r := &buttonRenderer{
+		b:    b,
+		text: t,
+		root: container.NewPadded(t),
 	}
 	r.Refresh()
 	return r
@@ -48,24 +58,26 @@ func (b *Button) Tapped(*fyne.PointEvent) {
 var _ fyne.WidgetRenderer = (*buttonRenderer)(nil)
 
 type buttonRenderer struct {
-	b     *Button
-	label *widget.Label
+	b    *Button
+	text *canvas.Text
+	root *fyne.Container
 }
 
 func (r *buttonRenderer) Destroy() {}
 
 func (r *buttonRenderer) Layout(size fyne.Size) {
-	r.label.Resize(size)
+	r.root.Resize(size)
 }
 
 func (r *buttonRenderer) MinSize() fyne.Size {
-	return r.label.MinSize()
+	return r.root.MinSize()
 }
 
 func (r *buttonRenderer) Objects() []fyne.CanvasObject {
-	return []fyne.CanvasObject{r.label}
+	return []fyne.CanvasObject{r.root}
 }
 
 func (r *buttonRenderer) Refresh() {
-	r.label.SetText(r.b.Name)
+	r.text.Text = r.b.Name
+	r.text.Refresh()
 }
