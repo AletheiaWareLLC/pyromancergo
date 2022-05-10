@@ -212,7 +212,7 @@ func (pi *PyromancerInspector) createContents() map[string]fyne.CanvasObject {
 			Monospace: true,
 		}),
 		nil, nil, nil,
-		container.NewVScroll(container.NewVBox(
+		container.NewScroll(container.NewVBox(
 			withPaddedBorder(container.NewBorder(NewButton("Processor", func() {
 				pi.Tree.OpenBranch("Processor")
 				pi.Tree.Select("Processor")
